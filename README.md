@@ -1,4 +1,4 @@
 # lyrixmatch
 
-`TODO:` collect song titles to `titles.txt`
+**TODO:** collect song titles to `titles.txt`
 * format: `{song title} = {singer}`
