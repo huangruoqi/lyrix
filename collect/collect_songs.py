@@ -6,7 +6,11 @@ import os
 
 url = 'https://www.9ku.com'
 
-urls_file = open('urls.txt', 'r', encoding='utf8')
+def convert(name):
+    illegal = u'<>:"/\\|?*'
+    for i in illegal:
+        name = name.replace(i,'')
+    return name.strip()
 
 def save_count(count):
     f = open('count.txt', 'w')
@@ -38,26 +42,34 @@ def save_songs(name, link):
     for block in soup.select('.singerMusic ol'):
         if block['id']=='fg': continue
         for song in block.select('li'):
-            title = song.select_one('font').string
-            lyrics = '\n'.join(get_lyrics(str(song.select_one('.chi')['href'])))
-            songs.append({'title': title, 'lyrics': lyrics})
+            title = None
+            lyrics = None
+            try:
+                title = convert(song.select_one('font').string)
+                lyrics = '\n'.join(get_lyrics(str(song.select_one('.chi')['href'])))
+                songs.append({'title': title, 'lyrics': lyrics})
+                print(title)
+            except:
+                continue
 
     # save lyrics
-    path = os.path.join('singers', name)
+    path = os.path.join('singers', convert(name))
     if not os.path.isdir(path): os.mkdir(path)
     for song in songs: save_one(path, song)
 
 count = get_count()
-
+print(count)
 urls_file = open('urls.txt', 'r', encoding='utf8')
-index = 0
-a = urls_file.readline().split('#')
-save_songs(a[0],a[1])
-# for line in urls_file:
-#     if index <= count: continue
-#     namelink = line.split('#')
-#     if len(namelink)!=2: continue
-#     save_titles(namelink[0], namelink[1])
-#     save_count(index)
-#     index+=1
+index = -1
+line = True
+while line:
+    index+=1
+    line = urls_file.readline()
+    if index <= count: continue
+    namelink = line.split('#')
+    print(namelink, 'started!')
+    if len(namelink)!=2: continue
+    save_songs(namelink[0], namelink[1])
+    save_count(index)
+    print(namelink, 'finished!')
 urls_file.close()
