@@ -46,12 +46,12 @@ const lrc = `[ver:v1.0]
 `
 function App() {
     const lyrics = Lrc.parse(lrc).lyrics
-    const [vars] = React.useState({start: Date.now()/1e3, total: 0, line: 0})
+    const [vars] = React.useState({start: Date.now()/1e3, line: 0})
     const [index, setIndex] = React.useState(0)
     React.useEffect(() => {
         const id = setInterval(()=> {
-            vars.total = Date.now()/1e3 - vars.start
-            if (vars.line<lyrics.length-1 && vars.total > lyrics[vars.line+1].timestamp) {
+            const total = Date.now()/1e3 - vars.start
+            if (vars.line<lyrics.length-1 && total > lyrics[vars.line+1].timestamp) {
                 setIndex(i=>i+1)
                 vars.line++
             }
