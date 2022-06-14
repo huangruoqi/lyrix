@@ -1,7 +1,8 @@
 import * as React from 'react'
-import {Lrc} from 'lrc-kit';
+// import {Lrc} from 'lrc-kit';
 import logo from './logo.svg';
 import './App.css';
+import {Lrc} from 'react-lrc'
 
 const lrc = `[ver:v1.0]
 [ti:6488979]
@@ -45,27 +46,49 @@ const lrc = `[ver:v1.0]
 [03:40.21]痛有多深刻
 `
 function App() {
-    const lyrics = Lrc.parse(lrc).lyrics
-    const [vars] = React.useState({start: Date.now()/1e3, line: 0})
-    const [index, setIndex] = React.useState(0)
+    // const lyrics = Lrc.parse(lrc).lyrics
+    // const [vars] = React.useState({start: Date.now()/1e3, line: 0})
+    // const [index, setIndex] = React.useState(0)
+    // React.useEffect(() => {
+    //     const id = setInterval(()=> {
+    //         const total = Date.now()/1e3 - vars.start
+    //         if (vars.line<lyrics.length-1 && total > lyrics[vars.line+1].timestamp) {
+    //             setIndex(i=>i+1)
+    //             vars.line++
+    //         }
+    //     }, 1000)
+    //     return () => clearInterval(id)
+    // }, [])
+
+    const [currentMillisecond, setC] = React.useState(0)
+    const [vars] = React.useState({start: Date.now()})
+
     React.useEffect(() => {
         const id = setInterval(()=> {
-            const total = Date.now()/1e3 - vars.start
-            if (vars.line<lyrics.length-1 && total > lyrics[vars.line+1].timestamp) {
-                setIndex(i=>i+1)
-                vars.line++
-            }
+            const total = Date.now() - vars.start
+            setC(i=>total)
         }, 1000)
         return () => clearInterval(id)
     }, [])
 
+    const lineRenderer = ({active, line}) => {
+        return active?
+            <p><b>{line.content}</b></p>:
+            <p>{line.content}</p>
+    }
+
     return (
         <div className="App">
-        {lyrics.map((e,i)=> {
+        {/* {lyrics.map((e,i)=> {
             return i===index?
                 <p key={i}><b>{e.timestamp}:{e.content}</b></p>:
                 <p key={i}>{e.timestamp}:{e.content}</p>
-        })}        
+        })}         */}
+        <Lrc 
+            lrc={lrc}
+            lineRenderer={lineRenderer}
+            currentMillisecond={currentMillisecond}
+        />
         </div>
     );
 }

@@ -54,8 +54,15 @@ def save_songs(name, link):
 
     # save lyrics
     path = os.path.join('singers', convert(name))
-    if not os.path.isdir(path): os.mkdir(path)
-    for song in songs: save_one(path, song)
+    try:
+        if not os.path.isdir(path): os.mkdir(path)
+    except:
+        return
+    for song in songs: 
+        try:
+            save_one(path, song)
+        except:
+            continue
 
 count = get_count()
 print(count)
